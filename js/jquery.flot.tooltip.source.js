@@ -85,7 +85,12 @@
                 var tipText;
 
                 // convert tooltip content template to real tipText
-                tipText = stringFormat(tooltipOptions.content, item);
+				if (item.series.tooltipOpts !== undefined && 
+						item.series.tooltipOpts.content !== undefined){
+					tipText = stringFormat(item.series.tooltipOpts.content);
+				} else {
+                	tipText = stringFormat(tooltipOptions.content, item);
+				}
 
                 tip.html(tipText);
                 updateTooltipPosition({

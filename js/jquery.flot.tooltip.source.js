@@ -20,7 +20,7 @@
             defaultTheme: true,
 
             // callbacks
-            onHover: function (flotItem, $tooltipEl) {}
+            onHover: function (flotItem, tooltipElement) {}
         }
     };
 
@@ -29,7 +29,6 @@
             x: 0,
             y: 0
         };
-       
 
         function bindEvents(plot, eventHolder) {
             var plotOptions = plot.getOptions();
@@ -85,11 +84,11 @@
                 var tipText;
 
                 // convert tooltip content template to real tipText
-				if (item.series.tooltipOpts !== undefined && 
+				if (item.series.tooltipOpts !== undefined &&
 						item.series.tooltipOpts.content !== undefined){
 					tipText = stringFormat(item.series.tooltipOpts.content);
 				} else {
-                	tipText = stringFormat(tooltipOptions.content, item);
+					tipText = stringFormat(tooltipOptions.content);
 				}
 
                 tip.html(tipText);
@@ -113,20 +112,19 @@
             }
 
 
+			
             /**
              * core function, create tooltip content
              * @param {string} content - template with tooltip content
-             * @param {object} item - flot item
              * @return {string} real tooltip content for current item
              */
-
-            function stringFormat(content, item) {
+            function stringFormat(content) {
                 var percentPattern = /%p\.{0,1}(\d{0,})/;
                 var seriesPattern = /%s/;
                 var xPattern = /%x\.{0,1}(?:\d{0,})/;
                 var yPattern = /%y\.{0,1}(?:\d{0,})/;
 
-                function adjustValPrecision(pattern, content, value) {
+                function adjustValPrecision(pattern, value) {
                     var precision;
                     var matchResult = content.match(pattern);
                     if (matchResult !== null) {
@@ -143,7 +141,7 @@
 
                 // helpers just for readability
 
-                function isTimeMode(axisName, item) {
+                function isTimeMode(axisName) {
                     return (typeof item.series[axisName].options.mode !== 'undefined' && item.series[axisName].options.mode === 'time');
                 }
 
@@ -168,7 +166,7 @@
 
                 // percent match for pie charts
                 if (typeof (item.series.percent) !== 'undefined') {
-                    content = adjustValPrecision(percentPattern, content, item.series.percent);
+                    content = adjustValPrecision(percentPattern, item.series.percent);
                 }
 
                 // series match
@@ -187,10 +185,10 @@
 
                 // set precision if defined
                 if (typeof item.series.data[item.dataIndex][0] === 'number') {
-                    content = adjustValPrecision(xPattern, content, item.series.data[item.dataIndex][0]);
+                    content = adjustValPrecision(xPattern, item.series.data[item.dataIndex][0]);
                 }
                 if (typeof item.series.data[item.dataIndex][1] === 'number') {
-                    content = adjustValPrecision(yPattern, content, item.series.data[item.dataIndex][1]);
+                    content = adjustValPrecision(yPattern, item.series.data[item.dataIndex][1]);
                 }
 
                 // if no value customization, use tickFormatter by default
